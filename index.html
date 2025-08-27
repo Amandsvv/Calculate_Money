@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Money Calculator</title>
+    <style>
+        /* ===== Global Styling ===== */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        /* ===== Title ===== */
+        h1 {
+            margin-top: 30px;
+            font-size: 2.5rem;
+            color: #ffd700;
+            text-shadow: 0px 0px 10px rgba(255, 215, 0, 0.7);
+            animation: glow 2s infinite alternate;
+        }
+
+        /* ===== Input Section ===== */
+        input[type="text"] {
+            width: 250px;
+            padding: 12px;
+            margin: 12px;
+            border: none;
+            border-radius: 12px;
+            outline: none;
+            font-size: 1rem;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            transition: transform 0.2s ease-in-out, box-shadow 0.3s;
+        }
+
+        input[type="text"]:focus {
+            transform: scale(1.05);
+            box-shadow: 0px 0px 15px rgba(255, 215, 0, 0.7);
+        }
+
+        /* ===== Button ===== */
+        button {
+            padding: 12px 25px;
+            margin: 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            background: #ffd700;
+            color: #333;
+            font-weight: 200;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.3s;
+        }
+
+        button:hover {
+            background: #ffb400;
+            transform: translateY(-3px);
+            box-shadow: 0px 5px 15px rgba(255, 215, 0, 0.5);
+        }
+
+        /* ===== Result Section ===== */
+        p {
+            font-size: 1.2rem;
+            margin: 15px;
+            padding: 12px 20px;
+            border-radius: 15px;
+            display: inline-block;
+            min-width: 280px;
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
+        /* Method 1: Getting money (Green card with money-bag icon) */
+        p.get {
+            background: rgba(0, 128, 0, 0.8);
+            border-left: 10px solid #00ff99;
+            color: #e6ffe6;
+            position: relative;
+        }
+
+        p.get::before {
+            content: "💰 ";
+            font-size: 1.3rem;
+            position: absolute;
+            left: 10px;
+        }
+
+        /* Method 2: Giving money (Red card with flying-money icon) */
+        p.give {
+            background: rgba(178, 34, 34, 0.85);
+            border-left: 10px solid #ff4444;
+            color: #ffeaea;
+            position: relative;
+        }
+
+        p.give::before {
+            content: "💸 ";
+            font-size: 1.3rem;
+            position: absolute;
+            left: 10px;
+        }
+
+        #reset_rs {
+            padding: 12px 25px;
+            margin: 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            background: #ff4d4d;
+            color: #fff;
+            font-weight: 200;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.3s;
+        }
+
+        #reset_rs:hover {
+            background: #cc0000;
+            transform: translateY(-3px);
+            box-shadow: 0px 5px 15px rgba(255, 0, 0, 0.5);
+        }
+
+        .btn{
+            display: flex;
+        }
+
+        /* ===== Animations ===== */
+        @keyframes glow {
+            from {
+                text-shadow: 0px 0px 8px #ffd700, 0 0 20px #ffb400;
+            }
+
+            to {
+                text-shadow: 0px 0px 20px #fff176, 0 0 30px #ffd700;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Money Calculator</h1>
+    <input type="text" id="aman_rs" placeholder="Money Spend By Aman">
+    <input type="text" id="saddu_rs" placeholder="Money Spend By Sadgyan">
+    <input type="text" id="yash_rs" placeholder="Money Spend By Yashwant">
+    <div class="btn">
+        <button id="calc_rs">Calculate</button>
+        <button id="reset_rs">Refresh</button>
+    </div>
+    <p id="aman_para"></p>
+    <p id="saddu_para"></p>
+    <p id="yash_para"></p>
+
+    <script>
+        document.getElementById("calc_rs").addEventListener('click', () => {
+            const a = Number(document.getElementById("aman_rs").value);
+            const b = Number(document.getElementById("saddu_rs").value);
+            const c = Number(document.getElementById("yash_rs").value);
+            const aman_para = document.getElementById('aman_para');
+            const saddu_para = document.getElementById('saddu_para');
+            const yash_para = document.getElementById('yash_para');
+            const total = a + b + c;
+
+            const perPersonMoney = Math.round(total / 3);
+
+            if (a >= perPersonMoney) {
+                aman_para.className = "get";
+                aman_para.innerHTML = `Aman should get : Rs. ${a - perPersonMoney}`;
+            } else {
+                aman_para.className = "give";
+                aman_para.innerHTML = `Aman should give : Rs. ${perPersonMoney - a}`;
+            }
+
+            if (b >= perPersonMoney) {
+                saddu_para.className = "get";
+                saddu_para.innerHTML = `Sadgyan should get : Rs. ${b - perPersonMoney}`;
+            } else {
+                saddu_para.className = "give";
+                saddu_para.innerHTML = `Sadgyan should give : Rs. ${perPersonMoney - b}`;
+            }
+
+            if (c >= perPersonMoney) {
+                yash_para.className = "get";
+                yash_para.innerHTML = `Yashwant should get : Rs. ${c - perPersonMoney}`;
+            } else {
+                yash_para.className = "give";
+                yash_para.innerHTML = `Yashwant should give : Rs. ${perPersonMoney - c}`;
+            }
+
+        });
+
+        document.getElementById("reset_rs").addEventListener('click', () => {
+            // clear input fields
+            document.getElementById("aman_rs").value = "";
+            document.getElementById("saddu_rs").value = "";
+            document.getElementById("yash_rs").value = "";
+
+            // clear result paragraphs
+            document.getElementById("aman_para").innerHTML = "";
+            document.getElementById("saddu_para").innerHTML = "";
+            document.getElementById("yash_para").innerHTML = "";
+
+            // remove classes (give/get)
+            document.getElementById("aman_para").className = "";
+            document.getElementById("saddu_para").className = "";
+            document.getElementById("yash_para").className = "";
+        });
+
+    </script>
+</body>
+
+</html>
