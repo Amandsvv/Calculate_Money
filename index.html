@@ -161,9 +161,15 @@
 
 <body>
     <h1>Money Calculator</h1>
-    <input type="text" id="aman_rs" placeholder="Money Spend By Aman">
-    <input type="text" id="saddu_rs" placeholder="Money Spend By Sadgyan">
-    <input type="text" id="yash_rs" placeholder="Money Spend By Yashwant">
+    <section>
+        <button id="add-member">Add Members +</button>
+    </section>
+    <div id="members">
+        <input type="text" id="aman_rs" placeholder="Money Spend By Aman">
+        <input type="text" id="saddu_rs" placeholder="Money Spend By Sadgyan">
+        <input type="text" id="yash_rs" placeholder="Money Spend By Yashwant">
+    </div>
+
     <div class="btn">
         <button id="calc_rs">Calculate</button>
         <button id="reset_rs">Refresh</button>
@@ -226,6 +232,14 @@
             document.getElementById("saddu_para").className = "";
             document.getElementById("yash_para").className = "";
         });
+
+        const members = document.getElementById('members');
+
+        document.getElementById('add-member').addEventListener('click',() => {
+            const new_member = document.createElement('input');
+            new_member.placeholder
+            members.appendChild
+        })
 
     </script>
 </body>
