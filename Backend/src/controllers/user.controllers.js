@@ -46,8 +46,6 @@ const registerUser = asyncHandler(async (req,res) => {
             throw new ApiError(500, "User Creation Failed, Please try again later")
         }
 
-        console.log(user)
-
         const createdUser = await User.findById(user._id).select("-password")
         if(!createdUser){
             throw new ApiError(500, "Error reteriving saved user.")
@@ -90,7 +88,16 @@ const loginUser = asyncHandler(async(req,res) => {
 
     const loggedInUser = await User.findById(user._id).select("-password -refreshToken");
 
-    res.status(200).json(new ApiResponse(201,loggedInUser,"User created successfully"))
+    const options = {
+        httpOnly:true,
+        secure:false,
+        sameSite:"Lax"
+    }
+
+    res.status(200)
+    .cookie("accessToken", accessToken,options)
+    .cookie("refreshToken",refreshToken,options)
+    .json(new ApiResponse(201,loggedInUser,"User created successfully"))
 })
 export {
     registerUser,

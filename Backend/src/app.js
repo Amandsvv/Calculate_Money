@@ -42,8 +42,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirnname = path.dirname(__filename);
 
 import Router from './routes/user.route.js';
+import GroupRoute from './routes/group.routes.js'
 
 app.use('/',Router);
+app.use('/api',GroupRoute)
 
 // Using the global error Handler 
 app.use(errorHandler);
