@@ -2,8 +2,6 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import User from "../models/user.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import jwt from 'jsonwebtoken'
-import mongoose from "mongoose"
 
 const generateAccessAndRefreshTokens = async(userId) => {
     try {
@@ -21,12 +19,12 @@ const generateAccessAndRefreshTokens = async(userId) => {
 };
 
 const registerUser = asyncHandler(async (req,res) => {
-    const {email, password} = req.body;
+    const {name,email, password} = req.body;
 
     console.log(email)
     console.log(password)
 
-    if([email,password].some((field) => field?.trim() === "")){
+    if([name,email,password].some((field) => field?.trim() === "")){
         throw new ApiError(400, "All fields are required.")
     }
 
@@ -38,6 +36,7 @@ const registerUser = asyncHandler(async (req,res) => {
 
     try {
         const user = await User.create({
+            name,
             email,
             password
         })
@@ -99,7 +98,43 @@ const loginUser = asyncHandler(async(req,res) => {
     .cookie("refreshToken",refreshToken,options)
     .json(new ApiResponse(201,loggedInUser,"User created successfully"))
 })
+
+const logoutUser = asyncHandler(async(req,res)=>{
+    await User.findByIdAndUpdate(
+        req.user._id,
+        {
+            $set :{
+                refreshToken : undefined
+            }
+        },
+        {
+            new : true
+        }
+    )
+
+    const options = {
+        httponly : true,
+        secure: false,
+        sameSite:"Lax"
+    }
+
+    return res.status(200)
+        .clearCookie("accessToken", options)
+        .clearCookie("refreshToken", options)
+        .json(
+            new ApiResponse(200, {}, "User logged out Successfully")
+        )
+});
+
+const getCurrentUser = asyncHandler(async(req,res) => {
+    return res.status(200)
+                .json(
+                    new ApiResponse(200, req.user, "Current User Fetched Successfully")
+                )
+})
 export {
     registerUser,
-    loginUser
+    loginUser,
+    getCurrentUser,
+    logoutUser
 }

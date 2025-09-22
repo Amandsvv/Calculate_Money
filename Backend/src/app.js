@@ -12,7 +12,7 @@ const app = express();
 //Enable CORS for frontend-backend communication
 app.use(cors(
     {
-        origin : process.env.CORS_ORIGIN,
+        origin : process.env.CORS_ORIGIN || 'http://localhost:5173',
         credentials : true
     }
 ));
@@ -44,7 +44,7 @@ const __dirnname = path.dirname(__filename);
 import Router from './routes/user.route.js';
 import GroupRoute from './routes/group.routes.js'
 
-app.use('/',Router);
+app.use('/api',Router);
 app.use('/api',GroupRoute)
 
 // Using the global error Handler 
