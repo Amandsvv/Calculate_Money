@@ -10,6 +10,8 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import Groups from "./pages/CreateGroup"; // Assuming your Groups page is CreateGroup.jsx
 import GroupDetails from "./pages/GroupDetails";
+import LandingPage from "./pages/LandingPage";
+import AddExpense from "./pages/AddExpense";
 
 export default function App() {
   return (
@@ -20,8 +22,18 @@ export default function App() {
           {/* Public Routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/" element={<LandingPage />} />
 
           {/* Protected Routes */}
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <LandingPage />
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/dashboard"
             element={
@@ -39,10 +51,18 @@ export default function App() {
             }
           />
           <Route
-            path="/groups/:id"
+            path="/groups/:groupId"
             element={
               <ProtectedRoute>
                 <GroupDetails />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/groups/:groupId/add-expense"
+            element={
+              <ProtectedRoute>
+                <AddExpense />
               </ProtectedRoute>
             }
           />

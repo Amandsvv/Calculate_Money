@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import  Group  from "../models/groups.model.js";
 import  User  from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
@@ -99,32 +100,31 @@ const getMonthlyGroupExpenses = asyncHandler(async (req, res) => {
   const { groupId } = req.params;
   const { month, year } = req.query;
 
-
   if (!groupId || !month || !year) {
     throw new ApiError(400, "groupId, month, and year are required");
   }
 
+  console.log("1");
   const startDate = new Date(year, month - 1, 1);
   const endDate = new Date(year, month, 1);
 
-  // ✅ Fetch the group first
+  // Fetch group basic info
   const group = await Group.findById(groupId)
     .populate("members.user", "email name")
     .lean();
+    console.log("2");
 
   if (!group) throw new ApiError(404, "Group not found");
 
-  // ✅ Case 1: Group has no expenses at all
   if (!group.expenses || group.expenses.length === 0) {
     return res.status(200).json({
       success: true,
       group: { ...group, expenses: [] },
     });
   }
-
-  // ✅ Case 2: Group has expenses → run aggregation
+console.log("3")
   const expenses = await Group.aggregate([
-    { $match: { _id: new mongoose.Types.ObjectId(groupId) } },
+    { $match: { _id: groupId} },
     { $unwind: "$expenses" },
     { $match: { "expenses.date": { $gte: startDate, $lt: endDate } } },
 
@@ -139,33 +139,17 @@ const getMonthlyGroupExpenses = asyncHandler(async (req, res) => {
     },
     { $unwind: { path: "$paidByUser", preserveNullAndEmptyArrays: true } },
 
-    // Map splitAmong (userId + share)
-    {
-      $addFields: {
-        "expenses.splitAmong": {
-          $map: {
-            input: "$expenses.splitAmong",
-            as: "s",
-            in: {
-              userId: "$$s.user",
-              share: "$$s.share",
-            },
-          },
-        },
-      },
-    },
-
-    // Lookup splitAmong user details
+    // Lookup splitAmong users
     {
       $lookup: {
         from: "users",
-        localField: "expenses.splitAmong.userId",
+        localField: "expenses.splitAmong.user",
         foreignField: "_id",
         as: "splitUsers",
       },
     },
 
-    // Replace splitAmong userId with full user details
+    // Replace splitAmong with user details
     {
       $addFields: {
         "expenses.splitAmong": {
@@ -179,7 +163,7 @@ const getMonthlyGroupExpenses = asyncHandler(async (req, res) => {
                     $filter: {
                       input: "$splitUsers",
                       as: "u",
-                      cond: { $eq: ["$$u._id", "$$s.userId"] },
+                      cond: { $eq: ["$$u._id", "$$s.user"] },
                     },
                   },
                   0,
@@ -214,10 +198,8 @@ const getMonthlyGroupExpenses = asyncHandler(async (req, res) => {
       },
     },
   ]);
-  console.log(expenses)
 
   if (!expenses.length) {
-    // No expenses in this month
     return res.status(200).json({
       success: true,
       group: { ...group, expenses: [] },
@@ -226,6 +208,7 @@ const getMonthlyGroupExpenses = asyncHandler(async (req, res) => {
 
   return res.status(200).json({ success: true, group: expenses[0] });
 });
+
 
 const calculateMonthlyBalances = asyncHandler(async (req, res) => {
   const { groupId } = req.params;
