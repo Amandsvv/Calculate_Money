@@ -38,14 +38,14 @@ export default function AddExpense() {
         share,
       }));
 
-      await api.post(`/expenses/${groupId}`, {
+      await api.post(`/${groupId}/add-expenses`, {
         description,
         amount,
         paidBy,
         splitAmong: splitData,
       });
 
-      navigate(`/groups/${groupId}/expenses`);
+      navigate(`/groups/${groupId}`);
     } catch (error) {
       console.error("Failed to add expense", error);
     }

@@ -12,7 +12,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="bg-blue-600 text-white px-6 py-4 flex justify-between items-center">
+    <nav className="bg-blue-600 w-full text-white px-6 py-4 flex justify-between items-center fixed mb-8">
       {/* Logo / Brand */}
       <div className="text-xl font-bold">
         <Link to="/">RoomieSplit</Link>

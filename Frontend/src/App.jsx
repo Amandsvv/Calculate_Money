@@ -12,11 +12,13 @@ import Groups from "./pages/CreateGroup"; // Assuming your Groups page is Create
 import GroupDetails from "./pages/GroupDetails";
 import LandingPage from "./pages/LandingPage";
 import AddExpense from "./pages/AddExpense";
+import SpringBackground from "./components/ParticlesBackgrounds";
 
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <SpringBackground/>
         <Navbar />
         <Routes>
           {/* Public Routes */}
@@ -59,7 +61,7 @@ export default function App() {
             }
           />
           <Route
-            path="/groups/:groupId/add-expense"
+            path="/:groupId/add-expenses"
             element={
               <ProtectedRoute>
                 <AddExpense />

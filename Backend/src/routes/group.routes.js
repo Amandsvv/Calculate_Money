@@ -5,7 +5,7 @@ import {
   getMyGroups,
   addMember,
   removeMember,
-  getMonthlyGroupExpenses,
+  getGroupById
 } from "../controllers/group.controllers.js";
 import {
   addExpense,
@@ -23,12 +23,12 @@ router.post("/:groupId/respond", verifyJWT, respondInvite);
 router.get("/my", verifyJWT, getMyGroups);
 router.post("/:groupId/members", verifyJWT, addMember);
 router.delete("/:groupId/members/:memberId", verifyJWT, removeMember);
-router.get("/groups/:groupId/monthly",verifyJWT,getMonthlyGroupExpenses);
-router.get("/groups/:groupId/balance",verifyJWT,calculateBalance)
+router.get("/groups/:groupId",verifyJWT,getGroupById)
+
 
 // Expense routes
-router.post("/:groupId/expenses", verifyJWT, addExpense);
-router.get("/:groupId/expenses", verifyJWT, getExpenses);
+router.post("/:groupId/add-expenses", verifyJWT, addExpense);
+router.get("/:groupId/monthly", verifyJWT, getExpenses);
 router.get("/:groupId/balance", verifyJWT, calculateBalance);
 router.delete("/:groupId/expenses/:expenseId", verifyJWT, deleteExpense);
 
