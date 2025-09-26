@@ -1,4 +1,4 @@
-import  Group  from "../models/groups.model.js";
+import Group from "../models/groups.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
@@ -28,7 +28,7 @@ const getExpenses = asyncHandler(async (req, res) => {
   console.log(`Month ${month}, Year : ${year}`)
 
   const group = await Group.findById(groupId).populate("expenses.paidBy", "name")
-                                              .populate("expenses.splitAmong.user", "name email");;
+    .populate("expenses.splitAmong.user", "name email");;
 
   if (!group) throw new ApiError(404, "Group not found");
 
@@ -42,7 +42,6 @@ const getExpenses = asyncHandler(async (req, res) => {
       return expDate >= startDate && expDate <= endDate;
     });
   }
-   console.log(expenses.map(e => e.splitAmong));
   res.json({ success: true, expenses });
 });
 
@@ -51,10 +50,12 @@ const getExpenses = asyncHandler(async (req, res) => {
 const calculateBalance = asyncHandler(async (req, res) => {
   const { groupId } = req.params;
   const { month, year } = req.query;
+  console.log("GroupId : ",groupId)
 
   const group = await Group.findById(groupId).populate("members.user", "email").populate("expenses.paidBy", "email");
 
   if (!group) throw new ApiError(404, "Group not found");
+  console("Here : ",group);
 
   // initialize balance for each member
   const balance = {};
@@ -82,7 +83,9 @@ const calculateBalance = asyncHandler(async (req, res) => {
     });
   });
 
-  res.json({ success: true, balance });
+  console.log("Balance : ",balance)
+
+  return res.status(200).json({ success: true, balance });
 });
 
 
@@ -99,9 +102,59 @@ const deleteExpense = asyncHandler(async (req, res) => {
   res.json({ success: true, message: "Expense deleted" });
 });
 
-export{
-    addExpense,
-    getExpenses,
-    calculateBalance,
-    deleteExpense
+const editExpense = asyncHandler(async (req, res) => {
+  const { groupId, expenseId } = req.params;
+  const { description, amount } = req.body;
+
+  if (!groupId || !expenseId) {
+    throw new ApiError(404, "URL missing params");
+  }
+  if (!description || !amount) {
+    throw new ApiError(400, "All fields are required");
+  }
+
+  const group = await Group.findById(groupId);
+  if (!group) {
+    throw new ApiError(404, "Group not found");
+  }
+
+  // ✅ Find the expense inside group
+  const expense = group.expenses.id(expenseId);
+  if (!expense) {
+    throw new ApiError(404, "Expense not found");
+  }
+
+  // ✅ Update fields
+  expense.description = description;
+  expense.amount = amount;
+
+  console.log(expense)
+
+  // suppose expense is already fetched from DB
+  if (expense.splitAmong && expense.splitAmong.length > 0) {
+    const equalShare = amount / expense.splitAmong.length;
+
+    expense.splitAmong = expense.splitAmong.map(item => ({
+      ...item.toObject(),   // keep existing user as it is
+      share: equalShare     // update only the share
+    }));
+  }
+
+  // ✅ Save the group (subdocument auto-saves inside parent)
+  await group.save({ validateBeforeSave: false });
+  console.log(expense)
+
+  res.status(200).json({
+    success: true,
+    message: "Expense updated successfully",
+    expense,
+  });
+});
+
+export {
+  addExpense,
+  getExpenses,
+  calculateBalance,
+  deleteExpense,
+  editExpense
 }

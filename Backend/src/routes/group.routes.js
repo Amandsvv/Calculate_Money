@@ -12,6 +12,7 @@ import {
   getExpenses,
   calculateBalance,
   deleteExpense,
+  editExpense
 } from "../controllers/expense.controllers.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
@@ -31,5 +32,6 @@ router.post("/:groupId/add-expenses", verifyJWT, addExpense);
 router.get("/:groupId/monthly", verifyJWT, getExpenses);
 router.get("/:groupId/balance", verifyJWT, calculateBalance);
 router.delete("/:groupId/expenses/:expenseId", verifyJWT, deleteExpense);
+router.route("/:groupId/expenses/:expenseId").put(verifyJWT,editExpense);
 
 export default router;

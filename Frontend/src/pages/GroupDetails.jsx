@@ -92,7 +92,7 @@ export default function GroupDetails() {
   // ✅ Save editing
   const saveEditing = async (expenseId) => {
     try {
-      await api.put(`/groups/${groupId}/expenses/${expenseId}`, editData);
+      await api.put(`/${groupId}/expenses/${expenseId}`, editData);
       toast.success("Expense updated successfully");
       cancelEditing();
       refreshData();
