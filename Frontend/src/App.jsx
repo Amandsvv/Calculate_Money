@@ -13,10 +13,13 @@ import GroupDetails from "./pages/GroupDetails";
 import LandingPage from "./pages/LandingPage";
 import AddExpense from "./pages/AddExpense";
 import SpringBackground from "./components/ParticlesBackgrounds";
+import {NotificationProvider} from "./context/NotificationContext";
+import Invites from "./pages/Invite";
 
 export default function App() {
   return (
     <AuthProvider>
+      <NotificationProvider>
       <BrowserRouter>
         <SpringBackground/>
         <Navbar />
@@ -68,8 +71,19 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+
+           <Route
+            path="/invites"
+            element={
+              <ProtectedRoute>
+                <Invites />
+              </ProtectedRoute>
+            }
+            />
+
         </Routes>
       </BrowserRouter>
+      </NotificationProvider>
     </AuthProvider>
   );
 }

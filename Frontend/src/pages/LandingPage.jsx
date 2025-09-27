@@ -8,7 +8,7 @@ export default function LandingPage() {
       {/* Hero Section */}
       <header className="px-6 py-10 md:py-20 text-center max-w-4xl mx-auto">
         <h1 className="text-4xl md:text-6xl font-extrabold text-gray-900 mb-6">
-          RoomieSplit 💸
+          RoomieSplit
         </h1>
         <p className="text-lg md:text-xl text-gray-600 mb-8">
           Share expenses with friends, track who paid what, and split bills
